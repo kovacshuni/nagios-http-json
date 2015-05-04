@@ -46,6 +46,20 @@ class JsonHelper:
 		self.data = json_data
 		self.separator = separator
 
+	def getSubElement(self, key, data):
+		subElement = key[:key.find(self.separator)]
+		if subElement in data:
+			return self.get(key[key.find(self.separator) + 1:], data[subElement])
+		else:
+			return (None, 'not_found')
+
+	def getSubArrayElement(self, key, data):
+		index = key[key.find('[') + 1:key.find(']')]
+		if index <= len(data):
+			return self.get(key[key.find(']') + 1:], data[index])
+		else:
+			return (None, 'not_found')
+			
 	def equals(self, key, value): return self.exists(key) and str(self.get(key)) == value
 	def lte(self, key, value): return self.exists(key) and float(self.get(key)) <= float(value)
 	def gte(self, key, value): return self.exists(key) and float(self.get(key)) >= float(value)
@@ -60,34 +74,17 @@ class JsonHelper:
 
 		if key.find(self.separator) != -1 and key.find('[') != -1 :
 			if key.find(self.separator) < key.find('[') :
-				return self.get(key[key.find(self.separator) + 1:], data[key[:key.find(self.separator)]])
+				return getSubElement(self, key, data)
 			else:
-				return self.get(key[key.find(']') + 1:], data[key.find('[') + 1:key.find(']')])
+				return getSubArrayElement(self, key, data)
 		else:
 			if key.find(self.separator) != -1 : 
-				subElement = key[:key.find(self.separator)]
-				if subElement in data:
-					return self.get(key[key.find(self.separator) + 1:], data[subElement])
-				else:
-					return (None, 'not_found')
+				return getSubElement(self, key, data)
 			else:
 				if key.find('[') != -1 :
-					index = key[key.find('[') + 1:key.find(']')]
-					if index <= len(data):
-						return self.get(key[key.find(']') + 1:], data[index])
-					else:
-						return (None, 'not_found')
+					return getSubArrayElement(self, key, data)
 				else:
-					if key in data:
-						return  data[key]
-					else:
-						return (None, 'not_found')
-
-	def getSubElement(self, key):
-		return self.get(key[key.find(self.separator) + 1:], data[key[:key.find(self.separator)]])
-
-	def getSubArrayElement(self, key):
-		return self.get(key[key.find(']') + 1:], data[key.find('[') + 1:key.find(']')])
+					getSubElement(self, key, data)
 
 class JsonRuleProcessor:
 	"""Perform checks and gather values from a JSON dict given rules and metrics definitions"""
