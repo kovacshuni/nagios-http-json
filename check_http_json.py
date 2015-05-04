@@ -47,16 +47,31 @@ class JsonHelper:
 		self.separator = separator
 
 	def getSubElement(self, key, data):
-		subElement = key[:key.find(self.separator)]
-		if subElement in data:
-			return self.get(key[key.find(self.separator) + 1:], data[subElement])
+		separatorIndex = key.find(self.separator)
+		partialKey = key[:separatorIndex]
+		remainingKey = key[separatorIndex + 1:]
+		if partialKey in data:
+			return self.get(remainingKey, data[partialKey])
 		else:
 			return (None, 'not_found')
 
 	def getSubArrayElement(self, key, data):
-		index = key[key.find('[') + 1:key.find(']')]
-		if index <= len(data):
-			return self.get(key[key.find(']') + 1:], data[index])
+		subElemKey = key[:key.find('[')]
+		print subElemKey	
+		index = int(key[key.find('[') + 1:key.find(']')])
+		print index	
+		remainingKey = key[key.find('].') + 2:]
+		print remainingKey
+		if subElemKey in data:
+			print 'subelemkey in data'
+			if index < len(data[subElemKey]):
+				print 'index smaller'
+				print data[subElemKey]
+				print data[subElemKey][index]
+				print remainingKey
+				return self.get(remainingKey, data[subElemKey][index])
+			else:
+				return (None, 'not_found')
 		else:
 			return (None, 'not_found')
 			
@@ -71,20 +86,30 @@ class JsonHelper:
 		else:
 			data = self.data
 
+		if len(key) <= 0:
+			return data
 
 		if key.find(self.separator) != -1 and key.find('[') != -1 :
 			if key.find(self.separator) < key.find('[') :
-				return getSubElement(self, key, data)
+				print 'b1'
+				return self.getSubElement(key, data)
 			else:
-				return getSubArrayElement(self, key, data)
+				print 'b2'
+				return self.getSubArrayElement(key, data)
 		else:
 			if key.find(self.separator) != -1 : 
-				return getSubElement(self, key, data)
+				print 'b3'
+				return self.getSubElement(key, data)
 			else:
 				if key.find('[') != -1 :
-					return getSubArrayElement(self, key, data)
+					print 'b4'
+					return self.getSubArrayElement(key, data)
 				else:
-					getSubElement(self, key, data)
+					print 'b5'
+					if key in data:
+						return data[key]
+					else:
+						return (None, 'not_found')
 
 class JsonRuleProcessor:
 	"""Perform checks and gather values from a JSON dict given rules and metrics definitions"""
