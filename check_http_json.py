@@ -57,13 +57,29 @@ class JsonHelper:
 		else:
 			data = self.data
 
-		if self.separator in key:
-			return self.get(key[key.find(self.separator) + 1:], data[key[:key.find(self.separator)]])
-		else:
-			if key in data:
-				return  data[key]
+
+		if key.find(self.separator) != -1 and key.find('[') != -1 :
+			if key.find(self.separator) < key.find('[') :
+				return self.get(key[key.find(self.separator) + 1:], data[key[:key.find(self.separator)]])
 			else:
-				return (None, 'not_found')
+				return self.get(key[key.find(']') + 1:], data[key.find('[') + 1:key.find(']')])
+		else:
+			if key.find(self.separator) != -1 : 
+				return self.get(key[key.find(self.separator) + 1:], data[key[:key.find(self.separator)]])
+			else:
+				if key.find('[') != -1 :
+					return self.get(key[key.find(']') + 1:], data[key.find('[') + 1:key.find(']')])
+				else:
+					if key in data:
+						return  data[key]
+					else:
+						return (None, 'not_found')
+
+	def getSubElement(self, key):
+		return self.get(key[key.find(self.separator) + 1:], data[key[:key.find(self.separator)]])
+
+	def getSubArrayElement(self, key):
+		return self.get(key[key.find(']') + 1:], data[key.find('[') + 1:key.find(']')])
 
 class JsonRuleProcessor:
 	"""Perform checks and gather values from a JSON dict given rules and metrics definitions"""
