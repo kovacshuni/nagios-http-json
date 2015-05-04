@@ -65,10 +65,18 @@ class JsonHelper:
 				return self.get(key[key.find(']') + 1:], data[key.find('[') + 1:key.find(']')])
 		else:
 			if key.find(self.separator) != -1 : 
-				return self.get(key[key.find(self.separator) + 1:], data[key[:key.find(self.separator)]])
+				subElement = key[:key.find(self.separator)]
+				if subElement in data:
+					return self.get(key[key.find(self.separator) + 1:], data[subElement])
+				else:
+					return (None, 'not_found')
 			else:
 				if key.find('[') != -1 :
-					return self.get(key[key.find(']') + 1:], data[key.find('[') + 1:key.find(']')])
+					index = key[key.find('[') + 1:key.find(']')]
+					if index <= len(data):
+						return self.get(key[key.find(']') + 1:], data[index])
+					else:
+						return (None, 'not_found')
 				else:
 					if key in data:
 						return  data[key]
