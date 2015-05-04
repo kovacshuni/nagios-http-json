@@ -57,18 +57,10 @@ class JsonHelper:
 
 	def getSubArrayElement(self, key, data):
 		subElemKey = key[:key.find('[')]
-		print subElemKey	
 		index = int(key[key.find('[') + 1:key.find(']')])
-		print index	
 		remainingKey = key[key.find('].') + 2:]
-		print remainingKey
 		if subElemKey in data:
-			print 'subelemkey in data'
 			if index < len(data[subElemKey]):
-				print 'index smaller'
-				print data[subElemKey]
-				print data[subElemKey][index]
-				print remainingKey
 				return self.get(remainingKey, data[subElemKey][index])
 			else:
 				return (None, 'not_found')
@@ -91,21 +83,16 @@ class JsonHelper:
 
 		if key.find(self.separator) != -1 and key.find('[') != -1 :
 			if key.find(self.separator) < key.find('[') :
-				print 'b1'
 				return self.getSubElement(key, data)
 			else:
-				print 'b2'
 				return self.getSubArrayElement(key, data)
 		else:
 			if key.find(self.separator) != -1 : 
-				print 'b3'
 				return self.getSubElement(key, data)
 			else:
 				if key.find('[') != -1 :
-					print 'b4'
 					return self.getSubArrayElement(key, data)
 				else:
-					print 'b5'
 					if key in data:
 						return data[key]
 					else:
